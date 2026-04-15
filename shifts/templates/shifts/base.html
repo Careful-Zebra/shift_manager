@@ -1,0 +1,27 @@
+<!DOCTYPE html> 
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>BOA Shift Manager</title>
+    </head>
+    <body>
+        <header>
+            <h1>Shift Manager</h1>
+            {% if request.user.is_authenticated %}
+                <p>Welcome, {{ request.user.username }} | BOA Level: {{request.user.boa_level}} </p>
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Log Out</button>
+                </form>
+            {% else %}
+                <p><a href="{% url 'login' %}">Please log in</a></p>
+            {% endif %}
+            <hr>
+        </header>
+
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+    </body>
+</html>

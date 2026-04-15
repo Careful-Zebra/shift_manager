@@ -1,0 +1,116 @@
+{% extends 'shifts/base.html' %}
+
+{% block content %}
+    <style>
+        .shift-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+            font-family: sans-serif;
+            /* Added table-layout fixed so days have equal widths */
+            table-layout: fixed; 
+        }
+        .shift-table th, .shift-table td {
+            border: 1px solid #dddddd;
+            padding: 12px;
+            text-align: center;
+            vertical-align: top;
+            background-color: #fcfcfc;
+        }
+        .shift-table th {
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+        .shift-card {
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px; /* Added spacing between stacked cards */
+            font-size: 0.9em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Slight shadow to make them pop */
+        }
+        .shift-time {
+            color: #0056b3;
+            font-size: 1.05em;
+            margin-bottom: 5px;
+        }
+        .btn {
+            width: 100%;
+            padding: 6px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+
+    <h2>Shift Schedule</h2>
+
+    <div style="background-color: #e2e3e5; border: 1px solid #d6d8db; padding: 15px; border-radius: 5px; margin-bottom: 25px; font-size: 1.1em; color: #383d41;">
+        <strong>Your Shift Limit:</strong> You have claimed {{ user_finals_count }} out of your {{ max_shifts_finals }} allowed shifts for finals week, and {{ user_rrr_count }} out of your {{ max_shifts_rrr }} allowed shifts for RRR week.
+        
+        {% if user_shift_count >= max_shifts %}
+            <span style="color: #dc3545; font-weight: bold; margin-left: 10px;">(Max shifts reached)</span>
+        {% endif %}
+    </div>
+
+    {% if not schedule %}
+        <p>No shifts have been posted yet.</p>
+    {% endif %}
+
+    {% for shift_type, days_list in schedule.items %}
+        <h3>{{ shift_type }} Schedule</h3>
+
+        <table class="shift-table">
+            <thead>
+                <tr>
+                    {% for date in dates %}
+                        <th>{{ date|date:"l, M j" }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr> {% for day_shifts in days_list %}
+                        <td>
+                            {% for shift in day_shifts %}
+                                <div class="shift-card">
+                                    
+                                    <div class="shift-time">
+                                        <strong>{{ shift.start_time|time:"g:i A" }} - {{ shift.end_time|time:"g:i A" }}</strong>
+                                    </div>
+                                    <strong>{{ shift.location }}</strong><br>
+                                    Capacity: {{ shift.signups.count }} / {{ shift.capacity }}<br>
+                                    Currently Working:
+                                    {% if shift.signups.count == 0 %}
+                                        None
+                                    {% else %}
+                                        <ul style="list-style-type: none; padding-left: 0;">
+                                            {% for signup in shift.signups.all %}
+                                                <li>{{ signup.user.username }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+
+                                    <form method="POST" action="{% url 'claim_shift' shift.id %}">
+                                        {% csrf_token %}
+                                        {% if shift.id in user_shifts %}
+                                            <button type="submit" class="btn" style="background-color: #dc3545; color: white;">Unclaim</button>
+                                        {% elif shift.signups.count >= shift.capacity %}
+                                            <button type="button" class="btn" disabled style="background-color: #cccccc; color: white;">Full</button>
+                                        {% else %}
+                                            <button type="submit" class="btn" style="background-color: #28a745; color: white;">Claim</button>
+                                        {% endif %}
+                                    </form>
+                                    
+                                </div>
+                            {% endfor %}
+                        </td>
+                    {% endfor %}
+                    
+                </tr>
+            </tbody>
+        </table>
+    {% endfor %}
+{% endblock %}
