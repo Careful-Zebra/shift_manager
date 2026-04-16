@@ -114,7 +114,7 @@ USE_I18N = True
 USE_TZ = True
 
 #where to redirect users after login
-LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_REDIRECT_URL = 'home'
 
 #Where to redirect users if they aren't logged in
 LOGIN_URL = 'login'

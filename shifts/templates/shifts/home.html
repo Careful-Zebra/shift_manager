@@ -1,0 +1,24 @@
+{% extends 'shifts/base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; text-align: center;">
+    <h2>Select a Schedule</h2>
+    <p>Please choose which shift schedule you would like to view.</p>
+
+    <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 30px;">
+        <a href="{% url 'schedule_view' 'rrr' 'desk_roamer' %}" class="btn" style="background-color: #0056b3; color: white; padding: 15px; text-decoration: none; font-size: 1.1em; border-radius: 5px;">
+            RRR Week (Desk/Roamer)
+        </a>
+        <a href="{% url 'schedule_view' 'rrr' 'ops_lead' %}" class="btn" style="background-color: #17a2b8; color: white; padding: 15px; text-decoration: none; font-size: 1.1em; border-radius: 5px;">
+            RRR Week (Ops Lead)
+        </a>
+
+        <a href="{% url 'schedule_view' 'finals' 'desk_roamer' %}" class="btn" style="background-color: #28a745; color: white; padding: 15px; text-decoration: none; font-size: 1.1em; border-radius: 5px;">
+            Finals Week (Desk/Roamer)
+        </a>
+        <a href="{% url 'schedule_view' 'finals' 'ops_lead' %}" class="btn" style="background-color: #20c997; color: white; padding: 15px; text-decoration: none; font-size: 1.1em; border-radius: 5px;">
+            Finals Week (Ops Lead)
+        </a>
+    </div>
+</div>
+{% endblock %}

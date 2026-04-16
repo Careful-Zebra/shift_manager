@@ -33,6 +33,7 @@ class Command(BaseCommand):
                         last_name=last_name,
                         boa_level=level
                     )
+                    print(f"Created user: {username} with BOA level {level} and last name {last_name}")
                     # Set a random password they will change later
                     user.set_password(last_name) 
                     user.save()

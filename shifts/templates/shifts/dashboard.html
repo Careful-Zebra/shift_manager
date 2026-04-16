@@ -46,13 +46,19 @@
         }
     </style>
 
-    <h2>Shift Schedule</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>{{ page_title }}</h2>
+        <a href="{% url 'home' %}" style="padding: 8px 15px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px;">&larr; Back to Menu</a>
+    </div>
 
     <div style="background-color: #e2e3e5; border: 1px solid #d6d8db; padding: 15px; border-radius: 5px; margin-bottom: 25px; font-size: 1.1em; color: #383d41;">
         <strong>Your Shift Limit:</strong> You have claimed {{ user_finals_count }} out of your {{ max_shifts_finals }} allowed shifts for finals week, and {{ user_rrr_count }} out of your {{ max_shifts_rrr }} allowed shifts for RRR week.
         
-        {% if user_shift_count >= max_shifts %}
-            <span style="color: #dc3545; font-weight: bold; margin-left: 10px;">(Max shifts reached)</span>
+        {% if user_finals_count >= max_shifts_finals %}
+            <span style="color: #dc3545; font-weight: bold; margin-left: 10px;">(Max finals week shifts reached)</span>
+        {% endif %}
+        {% if user_rrr_count >= max_shifts_rrr %}
+            <span style="color: #dc3545; font-weight: bold; margin-left: 10px;">(Max RRR week shifts reached)</span>
         {% endif %}
     </div>
 
