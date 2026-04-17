@@ -1,0 +1,1 @@
+web: gunicorn shift_manager.wsgi --log-file -
