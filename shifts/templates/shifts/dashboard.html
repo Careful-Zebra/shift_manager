@@ -86,7 +86,7 @@
                                     <div class="shift-time">
                                         <strong>{{ shift.start_time|time:"g:i A" }} - {{ shift.end_time|time:"g:i A" }}</strong>
                                     </div>
-                                    <strong>{{ shift.location }}</strong><br>
+                                    <!-- <strong>{{ shift.location }}</strong><br> -->
                                     Capacity: {{ shift.signups.count }} / {{ shift.capacity }}<br>
                                     Currently Working:
                                     {% if shift.signups.count == 0 %}
