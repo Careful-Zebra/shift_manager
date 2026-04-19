@@ -18,7 +18,7 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ALLOWED_HOSTS = ['*']  # need to update to heroku URL before deploying
+ALLOWED_HOSTS = ['hidden-inlet-76204-f588e155f520.herokuapp.com']  
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -27,9 +27,9 @@ ALLOWED_HOSTS = ['*']  # need to update to heroku URL before deploying
 SECRET_KEY = "django-insecure-ypmp&uu#x-lg*z(=64zo@fblwwd=y8*w11@_dl+91-*m4mc-sj"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['hidden-inlet-76204-f588e155f520.herokuapp.com']
 
 AUTH_USER_MODEL = "shifts.User"
 
