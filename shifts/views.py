@@ -18,7 +18,7 @@ def home(request):
 def schedule_view(request, week_type, role_type):
     #start w/ all shifts sorted
     shifts = Shift.objects.all().order_by('start_time')
-    target_datetime = datetime.datetime(2026, 5, 10)
+    target_datetime = datetime.datetime(2026, 5, 10) #start of finals week, change in future semesters
 
     #filter by week type
     if week_type == 'rrr':
@@ -43,7 +43,7 @@ def schedule_view(request, week_type, role_type):
     user_shifts = Signup.objects.filter(user=request.user).values_list('shift_id', flat=True)
     user_shift_count = len(user_shifts)
     
-    max_shifts = 3 if request.user.boa_level in [1, 2] else 2
+    max_shifts = 3 if request.user.boa_level in [1, 2] else 2 #lowk irrelevant
     max_shifts_finals = 2
     max_shifts_rrr = 3
     
@@ -116,12 +116,19 @@ def claim_shift(request, shift_id):
     if user_rrr_count >= max_shifts_rrr and shift.start_time < target_datetime:
         return HttpResponse(f"You have reached your maximum limit of {max_shifts_rrr} RRR week shifts.", status=403)
 
+    
+
     #2. capacity check (atomic transac)
     with transaction.atomic():
-        current_signups = Signup.objects.filter(shift=shift).count()
-        if current_signups < shift.capacity:
-            #good, create the signup
-            Signup.objects.create(user=user, shift=shift)
+        # LOCK the shift row for this specific transaction
+        locked_shift = Shift.objects.select_for_update().get(id=shift.id)
+        
+        # Check signups against the locked shift
+        current_signups = Signup.objects.filter(shift=locked_shift).count()
+        
+        if current_signups < locked_shift.capacity:
+            # good, create the signup
+            Signup.objects.create(user=user, shift=locked_shift)
         else:
             return HttpResponse("This shift is already full.", status=400)
 
