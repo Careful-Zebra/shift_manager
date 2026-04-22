@@ -1,3 +1,6 @@
+from django.contrib import messages
+from django.views.decorators.cache import never_cache
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -15,6 +18,7 @@ def home(request):
     return render(request, 'shifts/home.html')
 
 @login_required
+@never_cache
 def schedule_view(request, week_type, role_type):
     #start w/ all shifts sorted
     shifts = Shift.objects.all().order_by('start_time')
@@ -130,7 +134,8 @@ def claim_shift(request, shift_id):
             # good, create the signup
             Signup.objects.create(user=user, shift=locked_shift)
         else:
-            return HttpResponse("This shift is already full.", status=400)
+            # return HttpResponse("This shift is already full.", status=400)
+            messages.error(request, "Sorry, someone just grabbed that shift right before you!")
 
     return redirect(past_webpage) #redirect back to where they came from (either finals or rrr schedule page)
 
