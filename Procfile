@@ -1,1 +1,1 @@
-web: gunicorn shift_manager.wsgi --workers 2 --threads 4 --log-file -
+web: gunicorn shift_manager.wsgi --workers 3 --threads 4 --log-file -

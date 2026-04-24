@@ -66,18 +66,20 @@
         <p>No shifts have been posted yet.</p>
     {% endif %}
 
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" style="padding: 10px; margin-bottom: 15px; border: 1px solid red; background-color: #f8d7da; color: #721c24;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     {% for shift_type, days_list in schedule.items %}
         <h3>{{ shift_type }} Schedule</h3>
 
-            {% if messages %}
-                <div class="messages">
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}" style="padding: 10px; margin-bottom: 15px; border: 1px solid red; background-color: #f8d7da; color: #721c24;">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
+            
 
         <table class="shift-table">
             <thead>
@@ -91,36 +93,44 @@
                 <tr> {% for day_shifts in days_list %}
                         <td>
                             {% for shift in day_shifts %}
-                                <div class="shift-card">
-                                    
-                                    <div class="shift-time">
-                                        <strong>{{ shift.start_time|time:"g:i A" }} - {{ shift.end_time|time:"g:i A" }}</strong>
-                                    </div>
-                                    <!-- <strong>{{ shift.location }}</strong><br> -->
-                                    Capacity: {{ shift.signups.count }} / {{ shift.capacity }}<br>
-                                    Currently Working:
-                                    {% if shift.signups.count == 0 %}
-                                        None
-                                    {% else %}
-                                        <ul style="list-style-type: none; padding-left: 0;">
-                                            {% for signup in shift.signups.all %}
-                                                <li>{{ signup.user.username }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    {% endif %}
-
-                                    <form method="POST" action="{% url 'claim_shift' shift.id %}">
-                                        {% csrf_token %}
-                                        {% if shift.id in user_shifts %}
-                                            <button type="submit" class="btn" style="background-color: #dc3545; color: white;">Unclaim</button>
-                                        {% elif shift.signups.count >= shift.capacity %}
-                                            <button type="button" class="btn" disabled style="background-color: #cccccc; color: white;">Full</button>
+                                {% with signup_count=shift.signups.count %}
+                                    <div class="shift-card">
+                                        
+                                        <div class="shift-time">
+                                            <strong>{{ shift.start_time|time:"g:i A" }} - {{ shift.end_time|time:"g:i A" }}</strong>
+                                        </div>
+                                        <!-- <strong>{{ shift.location }}</strong><br> -->
+                                        Capacity: {{ signup_count }} / {{ shift.capacity }}<br>
+                                        Currently Working:
+                                        {% if signup_count == 0 %}
+                                            None
                                         {% else %}
-                                            <button type="submit" class="btn" style="background-color: #28a745; color: white;">Claim</button>
+                                            <ul style="list-style-type: none; padding-left: 0;">
+                                                {% for signup in shift.signups.all %}
+                                                    <li>{{ signup.user.username }}</li>
+                                                {% endfor %}
+                                            </ul>
                                         {% endif %}
-                                    </form>
-                                    
-                                </div>
+
+                                        <form method="POST" action="{% url 'claim_shift' shift.id %}">
+                                            {% csrf_token %}
+                                            {% if shift.id in user_shifts %}
+                                                <button type="submit" class="btn" style="background-color: #dc3545; color: white;">Unclaim</button>
+                                            {% elif signup_count >= shift.capacity %}
+                                                <button type="button" class="btn" disabled style="background-color: #cccccc; color: white;">Full</button>
+                                            {% else %}
+                                                <button 
+                                                    type="submit" 
+                                                    class="btn" 
+                                                    style="background-color: #28a745; color: white;"
+                                                    onclick="this.disabled=true; this.innerText='Claiming...';">
+                                                    Claim
+                                                </button>
+                                            {% endif %}
+                                        </form>
+                                        
+                                    </div>
+                                    {% endwith %}
                             {% endfor %}
                         </td>
                     {% endfor %}

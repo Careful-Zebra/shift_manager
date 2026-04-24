@@ -27,7 +27,7 @@ ALLOWED_HOSTS = ['hidden-inlet-76204-f588e155f520.herokuapp.com']
 SECRET_KEY = "django-insecure-ypmp&uu#x-lg*z(=64zo@fblwwd=y8*w11@_dl+91-*m4mc-sj"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['hidden-inlet-76204-f588e155f520.herokuapp.com']
 
