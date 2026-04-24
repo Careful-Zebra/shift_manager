@@ -124,10 +124,12 @@ def claim_shift(request, shift_id):
         ).count()
 
         if user_finals_count >= MAX_SHIFTS_FINALS and locked_shift.start_time >= target_datetime:
-            return HttpResponse(f"You have reached your maximum limit of {MAX_SHIFTS_FINALS} finals week shifts.", status=403)
+            messages.error(request, f"You have reached your maximum limit of {MAX_SHIFTS_FINALS} finals week shifts.")
+            return redirect(past_webpage or 'home')
 
         if user_rrr_count >= MAX_SHIFTS_RRR and locked_shift.start_time < target_datetime:
-            return HttpResponse(f"You have reached your maximum limit of {MAX_SHIFTS_RRR} RRR week shifts.", status=403)
+            messages.error(request, f"You have reached your maximum limit of {MAX_SHIFTS_RRR} RRR week shifts.")
+            return redirect(past_webpage or 'home')
 
         # 5. Capacity check (NO select_for_update here, normal count)
         signups = list(
@@ -138,7 +140,8 @@ def claim_shift(request, shift_id):
         if current_signups < locked_shift.capacity:
             try:
                 Signup.objects.create(user=user, shift=locked_shift)
-                messages.success(request, f"Success! You claimed {locked_shift.get_shift_type_display()} at {locked_shift.start_time}.")
+                # formatted_time = locked_shift.start_time.strftime("%A, %b %d at %I:%M %p")
+                # messages.success(request, f"Success! You claimed {locked_shift.get_shift_type_display()} on {formatted_time}.")
             except IntegrityError:
                 # Catches database-level duplicates just in case!
                 messages.error(request, "You are already signed up for this shift.")
