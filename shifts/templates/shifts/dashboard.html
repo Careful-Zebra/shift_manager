@@ -123,7 +123,7 @@
                                                     type="submit" 
                                                     class="btn" 
                                                     style="background-color: #28a745; color: white;"
-                                                    onclick="this.disabled=true; this.innerText='Claiming...';">
+                                                    onclick="const btn = this; setTimeout(function() { btn.disabled=true; btn.innerText='Claiming...'; }, 0);">
                                                     Claim
                                                 </button>
                                             {% endif %}
